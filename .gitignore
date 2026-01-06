@@ -41,3 +41,9 @@ yarn-error.log*
 .env.local
 .env.*.local
 .vercel
+
+# Build files
+node_modules/
+tailwind-build.css
+input.css
+package-lock.json
