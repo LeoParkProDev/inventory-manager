@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인벤토리 매니저 Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .loader { border-top-color: #3b82f6; animation: spinner 0.6s linear infinite; }
+        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; margin: 0; 
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+    <!-- 메인 컨테이너 -->
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        
+        <!-- 헤더 섹션 -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+            <div>
+                <h1 class="text-2xl font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-boxes-stacked text-blue-600"></i>
+                    인벤토리 매니저
+                </h1>
+                <p class="text-slate-500">실시간 재고 관리 (전체 동기화 모드)</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="fetchInventory()" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg transition flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-arrows-rotate"></i> 새로고침
+                </button>
+                <button onclick="toggleModal(true)" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2 shadow-md">
+                    <i class="fa-solid fa-plus"></i> 품목 추가
+                </button>
+            </div>
+        </div>
+
+        <!-- 요약 대시보드 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 md:col-span-3 flex items-center justify-between">
+                <div>
+                    <p class="text-slate-500 text-sm font-medium">전체 등록 품목</p>
+                    <h3 id="totalItems" class="text-3xl font-bold mt-1">0</h3>
+                </div>
+                <div class="h-12 w-12 bg-blue-50 rounded-full flex items-center justify-center text-blue-600">
+                    <i class="fa-solid fa-cube text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 필터 및 검색 -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 mb-6 flex flex-col md:flex-row gap-4">
+            <div class="relative flex-1">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" onkeyup="filterInventory()" placeholder="품목명 검색..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+            </div>
+            <div class="w-full md:w-64 relative">
+                <select id="categoryFilter" onchange="filterInventory()" class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition appearance-none bg-white pr-10">
+                    <option value="">모든 카테고리</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                    <i class="fa-solid fa-chevron-down text-xs"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 인벤토리 테이블 -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 border-b border-slate-100">
+                        <tr>
+                            <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-1/4">카테고리</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-2/4">품목</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-1/4">수량</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryBody" class="divide-y divide-slate-100">
+                        <tr>
+                            <td colspan="3" class="p-12 text-center">
+                                <div class="flex justify-center flex-col items-center gap-3">
+                                    <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-10 w-10"></div>
+                                    <p class="text-slate-500 animate-pulse">데이터를 불러오는 중...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="noDataMessage" class="hidden p-12 text-center text-slate-400">
+                <i class="fa-solid fa-box-open text-5xl mb-4 opacity-20"></i>
+                <p>일치하는 데이터가 없습니다.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 품목 추가 모달 -->
+    <div id="itemModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-lg">새 품목 추가</h3>
+                <button onclick="toggleModal(false)" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="inventoryForm" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">카테고리</label>
+                    <input type="text" name="Category" required placeholder="예: 전자제품" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">품목</label>
+                    <input type="text" name="name" required placeholder="예: 맥북 프로 16인치" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">수량</label>
+                    <input type="number" name="count" required placeholder="0" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+                </div>
+                
+                <div class="pt-4 flex gap-3">
+                    <button type="button" onclick="toggleModal(false)" class="flex-1 px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition font-medium">취소</button>
+                    <button type="submit" id="saveBtn" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-bold shadow-md">저장하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 알림창 (Toast) -->
+    <div id="toast" class="fixed bottom-6 right-6 translate-y-20 opacity-0 transition-all duration-300 pointer-events-none z-[100]">
+        <div id="toastBg" class="bg-slate-800 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3">
+            <i id="toastIcon" class="fa-solid fa-circle-check text-green-400"></i>
+            <span id="toastMsg">메시지</span>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwbIe9byPtqUfOBwfZnpSRrEnfKb3DS-FrfqWzaDskFIXGopPvJNmr6u1j6lcV7xP-8/exec"
+        let inventoryData = [];
+        
+        window.onload = fetchInventory;
+
+        async function fetchInventory() {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                if (!response.ok) throw new Error('네트워크 응답 에러');
+                const result = await response.json();
+                const rawData = result.data || result;
+                
+                if (rawData && rawData.length > 0) {
+                    inventoryData = rawData.map(item => {
+                        const getVal = (target) => {
+                            const key = Object.keys(item).find(k => k.toLowerCase() === target.toLowerCase());
+                            return key ? item[key] : '';
+                        };
+                        return {
+                            category: getVal('category'),
+                            name: getVal('name'),
+                            count: getVal('count')
+                        };
+                    });
+                    renderTable(inventoryData);
+                    updateStats(inventoryData);
+                    setupFilters(inventoryData);
+                } else {
+                    document.getElementById('noDataMessage').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                showToast("데이터를 불러오지 못했습니다.", "error");
+            }
+        }
+
+        function updateStats(data) {
+            document.getElementById('totalItems').textContent = data.length;
+        }
+
+        function setupFilters(data) {
+            const categories = [...new Set(data.map(item => String(item.category || '').trim()))]
+                                .filter(val => val !== '')
+                                .sort();
+            const select = document.getElementById('categoryFilter');
+            select.innerHTML = '<option value="">모든 카테고리</option>';
+            categories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.textContent = cat;
+                select.appendChild(opt);
+            });
+        }
+
+        function renderTable(data) {
+            const body = document.getElementById('inventoryBody');
+            if (data.length === 0) {
+                body.innerHTML = '';
+                document.getElementById('noDataMessage').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('noDataMessage').classList.add('hidden');
+            body.innerHTML = data.map((item, index) => `
+                <tr class="hover:bg-slate-50/80 transition-colors group">
+                    <td class="px-6 py-4 text-sm text-slate-600 font-medium">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            ${item.category || '미분류'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-slate-800 font-semibold">${item.name || '-'}</td>
+                    <td class="px-6 py-4 text-sm text-slate-600">
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="qty-${index}" value="${item.count || 0}" 
+                                   class="w-24 px-3 py-1.5 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right font-mono transition shadow-sm">
+                            <button onclick="updateQuantity('${index}')" 
+                                    class="p-2 bg-green-100 text-green-600 rounded-md hover:bg-green-600 hover:text-white transition-all shadow-sm active:scale-95 group-hover:opacity-100 opacity-100"
+                                    title="전체 데이터 저장">
+                                <i class="fa-solid fa-check"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterInventory() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryTerm = document.getElementById('categoryFilter').value;
+            const filtered = inventoryData.filter(item => {
+                const matchesSearch = String(item.name).toLowerCase().includes(searchTerm) || 
+                                      String(item.category).toLowerCase().includes(searchTerm);
+                const matchesCategory = !categoryTerm || String(item.category).trim() === categoryTerm;
+                return matchesSearch && matchesCategory;
+            });
+            renderTable(filtered);
+        }
+
+        // 전체 데이터 동기화 (저장) 함수
+        async function syncAllData(loadingBtn = null) {
+            const originalContent = loadingBtn ? loadingBtn.innerHTML : '';
+            if (loadingBtn) {
+                loadingBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+                loadingBtn.disabled = true;
+            }
+
+            // 시트 헤더에 맞춘 데이터 구조 생성 (Category, name, count)
+            const payload = inventoryData.map(item => ({
+                Category: item.category,
+                name: item.name,
+                count: item.count
+            }));
+
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload) // 배열 전체 전송
+                });
+                showToast("전체 데이터가 안전하게 동기화되었습니다.");
+            } catch (err) {
+                console.error('Sync error:', err);
+                showToast("데이터 동기화 실패", "error");
+            } finally {
+                if (loadingBtn) {
+                    loadingBtn.innerHTML = originalContent;
+                    loadingBtn.disabled = false;
+                }
+            }
+        }
+
+        // 수량 업데이트 핸들러
+        async function updateQuantity(index) {
+            const newCount = document.getElementById(`qty-${index}`).value;
+            inventoryData[index].count = newCount; // 로컬 데이터 업데이트
+            
+            const btn = document.querySelector(`button[onclick="updateQuantity('${index}')"]`);
+            await syncAllData(btn); // 전체 데이터 전송
+        }
+
+        // 새 항목 추가 핸들러
+        document.getElementById('inventoryForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            // 로컬 데이터에 추가
+            inventoryData.push({
+                category: formData.get('Category'),
+                name: formData.get('name'),
+                count: formData.get('count')
+            });
+
+            const btn = document.getElementById('saveBtn');
+            toggleModal(false);
+            e.target.reset();
+            
+            await syncAllData(btn); // 전체 데이터 전송
+            renderTable(inventoryData); // 화면 즉시 갱신
+            updateStats(inventoryData);
+        };
+
+        function toggleModal(show) {
+            const modal = document.getElementById('itemModal');
+            modal.classList.toggle('hidden', !show);
+        }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const bg = document.getElementById('toastBg');
+            document.getElementById('toastMsg').textContent = msg;
+            if (type === 'error') {
+                icon.className = "fa-solid fa-circle-exclamation text-red-400";
+                bg.className = "bg-red-900 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3";
+            } else {
+                icon.className = "fa-solid fa-circle-check text-green-400";
+                bg.className = "bg-slate-800 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3";
+            }
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
