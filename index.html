@@ -60,8 +60,8 @@
                 <p class="text-slate-500">실시간 재고 관리 (전체 동기화 모드)</p>
             </div>
             <div class="flex gap-2">
-                <button onclick="fetchInventory(true)" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg transition flex items-center gap-2 shadow-sm">
-                    <i class="fa-solid fa-arrows-rotate"></i> 새로고침
+                <button onclick="saveAllData(this)" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2 shadow-md">
+                    <i class="fa-solid fa-save"></i> 저장
                 </button>
                 <button onclick="toggleModal(true)" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2 shadow-md">
                     <i class="fa-solid fa-plus"></i> 품목 추가
@@ -106,7 +106,8 @@
                         <tr>
                             <th class="px-4 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-1/4">카테고리</th>
                             <th class="px-4 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">품목</th>
-                            <th class="px-4 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-[140px]">수량</th>
+                            <th class="px-4 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-48">수량</th>
+                            <th class="px-4 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-20 text-center">작업</th>
                         </tr>
                     </thead>
                     <tbody id="inventoryBody" class="divide-y divide-slate-100">
@@ -156,12 +157,29 @@
                     <label class="block text-sm font-semibold text-slate-700 mb-1">수량</label>
                     <input type="number" name="count" required placeholder="0" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
                 </div>
-                
+
                 <div class="pt-4 flex gap-3">
                     <button type="button" onclick="toggleModal(false)" class="flex-1 px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition font-medium">취소</button>
                     <button type="submit" id="saveBtn" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-bold shadow-md">저장하기</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- 삭제 확인 모달 -->
+    <div id="deleteModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-lg text-red-600">품목 삭제</h3>
+                <button onclick="toggleDeleteModal(false)" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6">
+                <p class="text-slate-700 mb-6">정말로 이 품목을 삭제하시겠습니까?</p>
+                <div class="flex gap-3">
+                    <button type="button" onclick="toggleDeleteModal(false)" class="flex-1 px-4 py-2 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition font-medium">취소</button>
+                    <button type="button" onclick="confirmDelete()" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-bold shadow-md">삭제</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -333,14 +351,27 @@
                     <td class="px-4 py-4 text-sm text-slate-800 font-semibold">${item.name || '-'}</td>
                     <td class="px-4 py-4 text-sm text-slate-600">
                         <div class="flex items-center gap-1.5">
+                            <button onclick="decreaseQuantity(${index})"
+                                    class="w-8 h-8 bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300 transition-all shadow-sm active:scale-95 flex items-center justify-center"
+                                    title="수량 감소">
+                                <i class="fa-solid fa-minus text-xs"></i>
+                            </button>
                             <input type="number" id="qty-${index}" value="${item.count || 0}"
-                                   class="w-16 px-2 py-1.5 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right font-mono transition shadow-sm text-sm">
-                            <button onclick="updateQuantity('${index}')"
-                                    class="p-1.5 bg-green-100 text-green-600 rounded-md hover:bg-green-600 hover:text-white transition-all shadow-sm active:scale-95 group-hover:opacity-100 opacity-100"
-                                    title="전체 데이터 저장">
-                                <i class="fa-solid fa-check text-sm"></i>
+                                   onchange="updateQuantityValue(${index})"
+                                   class="w-16 px-2 py-1.5 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center font-mono transition shadow-sm text-sm">
+                            <button onclick="increaseQuantity(${index})"
+                                    class="w-8 h-8 bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300 transition-all shadow-sm active:scale-95 flex items-center justify-center"
+                                    title="수량 증가">
+                                <i class="fa-solid fa-plus text-xs"></i>
                             </button>
                         </div>
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                        <button onclick="deleteItem(${index})"
+                                class="p-2 bg-red-100 text-red-600 rounded-md hover:bg-red-600 hover:text-white transition-all shadow-sm active:scale-95"
+                                title="품목 삭제">
+                            <i class="fa-solid fa-trash text-sm"></i>
+                        </button>
                     </td>
                 </tr>
             `;
@@ -393,13 +424,66 @@
             }
         }
 
-        // 수량 업데이트 핸들러
-        async function updateQuantity(index) {
-            const newCount = document.getElementById(`qty-${index}`).value;
-            inventoryData[index].count = newCount; // 로컬 데이터 업데이트
-            
-            const btn = document.querySelector(`button[onclick="updateQuantity('${index}')"]`);
-            await syncAllData(btn); // 전체 데이터 전송
+        // 상단 저장 버튼 핸들러
+        async function saveAllData(btn) {
+            await syncAllData(btn);
+        }
+
+        // 수량 감소
+        function decreaseQuantity(index) {
+            const input = document.getElementById(`qty-${index}`);
+            let value = parseInt(input.value) || 0;
+            value = Math.max(0, value - 1); // 최소값 0
+            input.value = value;
+            inventoryData[index].count = value;
+        }
+
+        // 수량 증가
+        function increaseQuantity(index) {
+            const input = document.getElementById(`qty-${index}`);
+            let value = parseInt(input.value) || 0;
+            value = value + 1;
+            input.value = value;
+            inventoryData[index].count = value;
+        }
+
+        // 수량 직접 입력 시
+        function updateQuantityValue(index) {
+            const input = document.getElementById(`qty-${index}`);
+            let value = parseInt(input.value) || 0;
+            value = Math.max(0, value); // 최소값 0
+            input.value = value;
+            inventoryData[index].count = value;
+        }
+
+        // 삭제할 아이템 인덱스 저장
+        let deleteTargetIndex = null;
+
+        // 삭제 모달 표시
+        function deleteItem(index) {
+            deleteTargetIndex = index;
+            toggleDeleteModal(true);
+        }
+
+        // 삭제 확인 모달 토글
+        function toggleDeleteModal(show) {
+            const modal = document.getElementById('deleteModal');
+            modal.classList.toggle('hidden', !show);
+            if (!show) {
+                deleteTargetIndex = null;
+            }
+        }
+
+        // 삭제 확인
+        async function confirmDelete() {
+            if (deleteTargetIndex !== null) {
+                inventoryData.splice(deleteTargetIndex, 1);
+                toggleDeleteModal(false);
+                renderTable(inventoryData);
+                updateStats(inventoryData);
+                await syncAllData();
+                showToast("품목이 삭제되었습니다.");
+            }
         }
 
         // 새 항목 추가 핸들러
