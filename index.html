@@ -368,7 +368,7 @@
                             ${item.category || '미분류'}
                         </span>
                     </td>
-                    <td class="px-4 py-4 text-sm text-slate-800 font-semibold">${item.name || '-'}</td>
+                    <td class="px-4 py-4 text-base text-slate-800 font-semibold">${item.name || '-'}</td>
                     <td class="px-4 py-4 text-sm text-slate-600">
                         <div class="flex items-center gap-3">
                             <button onclick="decreaseQuantity(${index})" type="button"
@@ -379,7 +379,7 @@
                             </button>
                             <input type="number" id="qty-${index}" value="${item.count || 0}"
                                    onchange="updateQuantityValue(${index})"
-                                   class="w-24 px-3 py-2.5 border-2 border-slate-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center font-mono transition shadow-sm text-lg font-semibold">
+                                   class="w-12 px-2 py-2.5 border-2 border-slate-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center font-mono transition shadow-sm text-lg font-semibold">
                             <button onclick="increaseQuantity(${index})" type="button"
                                     style="background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%); color: white; font-weight: 900; font-size: 2rem; line-height: 1; box-shadow: 0 4px 6px rgba(0,0,0,0.3);"
                                     class="w-12 h-12 rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center justify-center border-2 border-blue-900"
