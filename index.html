@@ -370,19 +370,19 @@
                     </td>
                     <td class="px-4 py-4 text-sm text-slate-800 font-semibold">${item.name || '-'}</td>
                     <td class="px-4 py-4 text-sm text-slate-600">
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-3">
                             <button onclick="decreaseQuantity(${index})" type="button"
-                                    style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; font-weight: 900; font-size: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.3);"
-                                    class="w-10 h-10 rounded-lg hover:bg-red-800 transition-all active:scale-95 flex items-center justify-center border-2 border-red-900"
+                                    style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; font-weight: 900; font-size: 2rem; line-height: 1; box-shadow: 0 4px 6px rgba(0,0,0,0.3);"
+                                    class="w-12 h-12 rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center justify-center border-2 border-red-900"
                                     title="수량 감소">
                                 −
                             </button>
                             <input type="number" id="qty-${index}" value="${item.count || 0}"
                                    onchange="updateQuantityValue(${index})"
-                                   class="w-20 px-3 py-2 border-2 border-slate-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center font-mono transition shadow-sm text-base font-semibold">
+                                   class="w-24 px-3 py-2.5 border-2 border-slate-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center font-mono transition shadow-sm text-lg font-semibold">
                             <button onclick="increaseQuantity(${index})" type="button"
-                                    style="background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%); color: white; font-weight: 900; font-size: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.3);"
-                                    class="w-10 h-10 rounded-lg hover:bg-blue-800 transition-all active:scale-95 flex items-center justify-center border-2 border-blue-900"
+                                    style="background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%); color: white; font-weight: 900; font-size: 2rem; line-height: 1; box-shadow: 0 4px 6px rgba(0,0,0,0.3);"
+                                    class="w-12 h-12 rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center justify-center border-2 border-blue-900"
                                     title="수량 증가">
                                 +
                             </button>
@@ -390,10 +390,10 @@
                     </td>
                     <td class="px-4 py-4 text-center">
                         <button onclick="deleteItem(${index})" type="button"
-                                style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.3);"
-                                class="w-10 h-10 rounded-lg transition-all active:scale-95 flex items-center justify-center mx-auto border-2 border-red-900"
+                                style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-size: 1.25rem;"
+                                class="w-12 h-12 rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center justify-center mx-auto border-2 border-red-900"
                                 title="품목 삭제">
-                            <i class="fa-solid fa-trash text-base"></i>
+                            <i class="fa-solid fa-trash"></i>
                         </button>
                     </td>
                 </tr>
