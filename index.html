@@ -125,9 +125,9 @@
                 <table class="w-full text-left">
                     <thead class="bg-slate-50 border-b border-slate-100">
                         <tr>
-                            <th class="px-4 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-1/4">카테고리</th>
                             <th class="px-4 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">품목</th>
                             <th class="px-4 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-48">수량</th>
+                            <th class="px-4 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-1/4">카테고리</th>
                             <th class="px-4 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider w-20 text-center">작업</th>
                         </tr>
                     </thead>
@@ -380,11 +380,6 @@
         function createRowHTML(item, index) {
             return `
                 <tr class="hover:bg-slate-50/80 transition-colors group">
-                    <td class="px-4 py-4 text-sm text-slate-600 font-medium">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            ${item.category || '미분류'}
-                        </span>
-                    </td>
                     <td class="px-4 py-4 text-base text-slate-800 font-semibold">${item.name || '-'}</td>
                     <td class="px-4 py-4 text-sm text-slate-600">
                         <div class="flex items-center gap-3 mobile-compact-gap">
@@ -404,6 +399,11 @@
                                 +
                             </button>
                         </div>
+                    </td>
+                    <td class="px-4 py-4 text-sm text-slate-600 font-medium">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            ${item.category || '미분류'}
+                        </span>
                     </td>
                     <td class="px-4 py-4 text-center">
                         <button onclick="deleteItem(${index})" type="button"
