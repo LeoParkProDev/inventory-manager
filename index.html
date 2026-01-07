@@ -350,27 +350,27 @@
                     </td>
                     <td class="px-4 py-4 text-sm text-slate-800 font-semibold">${item.name || '-'}</td>
                     <td class="px-4 py-4 text-sm text-slate-600">
-                        <div class="flex items-center gap-1.5">
-                            <button onclick="decreaseQuantity(${index})"
-                                    class="w-8 h-8 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all shadow-sm active:scale-95 flex items-center justify-center"
+                        <div class="flex items-center gap-2">
+                            <button onclick="decreaseQuantity(${index})" type="button"
+                                    class="w-9 h-9 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-all shadow-md active:scale-95 flex items-center justify-center font-bold text-lg"
                                     title="수량 감소">
-                                <i class="fa-solid fa-minus text-xs"></i>
+                                −
                             </button>
                             <input type="number" id="qty-${index}" value="${item.count || 0}"
                                    onchange="updateQuantityValue(${index})"
-                                   class="w-16 px-2 py-1.5 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center font-mono transition shadow-sm text-sm">
-                            <button onclick="increaseQuantity(${index})"
-                                    class="w-8 h-8 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all shadow-sm active:scale-95 flex items-center justify-center"
+                                   class="w-20 px-3 py-2 border-2 border-slate-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center font-mono transition shadow-sm text-base font-semibold">
+                            <button onclick="increaseQuantity(${index})" type="button"
+                                    class="w-9 h-9 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all shadow-md active:scale-95 flex items-center justify-center font-bold text-lg"
                                     title="수량 증가">
-                                <i class="fa-solid fa-plus text-xs"></i>
+                                +
                             </button>
                         </div>
                     </td>
                     <td class="px-4 py-4 text-center">
-                        <button onclick="deleteItem(${index})"
-                                class="p-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all shadow-sm active:scale-95"
+                        <button onclick="deleteItem(${index})" type="button"
+                                class="w-9 h-9 bg-red-500 text-white rounded-lg hover:bg-red-700 transition-all shadow-md active:scale-95 flex items-center justify-center mx-auto"
                                 title="품목 삭제">
-                            <i class="fa-solid fa-trash text-sm"></i>
+                            <i class="fa-solid fa-trash text-base"></i>
                         </button>
                     </td>
                 </tr>
