@@ -43,6 +43,23 @@
         input[type=number]::-webkit-outer-spin-button {
             -webkit-appearance: none; margin: 0;
         }
+
+        /* 모바일 반응형: 버튼 크기 축소 */
+        @media (max-width: 768px) {
+            .mobile-compact-btn {
+                width: 2.25rem !important;  /* 36px (기존 48px에서 축소) */
+                height: 2.25rem !important;
+                font-size: 1.5rem !important; /* 기존 2rem에서 축소 */
+            }
+            .mobile-compact-gap {
+                gap: 0.5rem !important; /* gap-2 (기존 gap-3에서 축소) */
+            }
+            .mobile-compact-input {
+                width: 2.75rem !important; /* 44px (기존 48px 유지하되 약간 축소) */
+                padding-left: 0.25rem !important;
+                padding-right: 0.25rem !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen">
@@ -370,19 +387,19 @@
                     </td>
                     <td class="px-4 py-4 text-base text-slate-800 font-semibold">${item.name || '-'}</td>
                     <td class="px-4 py-4 text-sm text-slate-600">
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-3 mobile-compact-gap">
                             <button onclick="decreaseQuantity(${index})" type="button"
                                     style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; font-weight: 900; font-size: 2rem; line-height: 1; box-shadow: 0 4px 6px rgba(0,0,0,0.3);"
-                                    class="w-12 h-12 rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center justify-center border-2 border-red-900"
+                                    class="w-12 h-12 mobile-compact-btn rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center justify-center border-2 border-red-900"
                                     title="수량 감소">
                                 −
                             </button>
                             <input type="number" id="qty-${index}" value="${item.count || 0}"
                                    onchange="updateQuantityValue(${index})"
-                                   class="w-12 px-2 py-2.5 border-2 border-slate-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center font-mono transition shadow-sm text-lg font-semibold">
+                                   class="w-12 mobile-compact-input px-2 py-2.5 border-2 border-slate-400 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center font-mono transition shadow-sm text-lg font-semibold">
                             <button onclick="increaseQuantity(${index})" type="button"
                                     style="background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%); color: white; font-weight: 900; font-size: 2rem; line-height: 1; box-shadow: 0 4px 6px rgba(0,0,0,0.3);"
-                                    class="w-12 h-12 rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center justify-center border-2 border-blue-900"
+                                    class="w-12 h-12 mobile-compact-btn rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center justify-center border-2 border-blue-900"
                                     title="수량 증가">
                                 +
                             </button>
@@ -391,7 +408,7 @@
                     <td class="px-4 py-4 text-center">
                         <button onclick="deleteItem(${index})" type="button"
                                 style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); color: white; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.3); font-size: 1.25rem;"
-                                class="w-12 h-12 rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center justify-center mx-auto border-2 border-red-900"
+                                class="w-12 h-12 mobile-compact-btn rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center justify-center mx-auto border-2 border-red-900"
                                 title="품목 삭제">
                             <i class="fa-solid fa-trash"></i>
                         </button>
