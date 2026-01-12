@@ -42,8 +42,8 @@
         /* 모바일 반응형: 버튼 크기 유지 */
         @media (max-width: 768px) {
             .mobile-compact-btn {
-                width: 3rem !important;  /* 48px - 터치하기 좋은 크기 */
-                height: 3rem !important;
+                width: 3.45rem !important;  /* 55.2px - 터치하기 좋은 크기 (15% 증가) */
+                height: 3.45rem !important;
                 font-size: 1.75rem !important;
             }
             .mobile-compact-input {
@@ -385,8 +385,8 @@
                     <td class="pl-4 pr-5 py-4">
                         <div class="flex items-center gap-3">
                             <button onclick="decreaseQuantity(${index})" type="button"
-                                    class="w-14 h-14 mobile-compact-btn rounded-lg text-white font-black text-3xl flex items-center justify-center border-2 border-red-700 shadow-md"
-                                    style="background-color: #ef4444;"
+                                    class="mobile-compact-btn rounded-lg text-white font-black text-3xl flex items-center justify-center border-2 border-red-700 shadow-md"
+                                    style="background-color: #ef4444; width: 4.025rem; height: 4.025rem;"
                                     title="수량 감소">
                                 −
                             </button>
@@ -394,7 +394,8 @@
                                    onchange="updateQuantityValue(${index})"
                                    class="w-16 mobile-compact-input px-3 py-3 border-2 border-slate-400 rounded-lg focus:border-blue-500 focus:outline-none text-center font-mono text-xl font-bold">
                             <button onclick="increaseQuantity(${index})" type="button"
-                                    class="w-14 h-14 mobile-compact-btn rounded-lg bg-blue-600 text-white font-black text-3xl flex items-center justify-center border-2 border-blue-800"
+                                    class="mobile-compact-btn rounded-lg bg-blue-600 text-white font-black text-3xl flex items-center justify-center border-2 border-blue-800"
+                                    style="width: 4.025rem; height: 4.025rem;"
                                     title="수량 증가">
                                 +
                             </button>
@@ -407,8 +408,8 @@
                     </td>
                     <td class="px-5 py-4 text-center">
                         <button onclick="deleteItem(${index})" type="button"
-                                class="w-14 h-14 mobile-compact-btn rounded-lg text-white flex items-center justify-center mx-auto border-2 border-slate-600 shadow-md"
-                                style="background-color: #64748b;"
+                                class="mobile-compact-btn rounded-lg text-white flex items-center justify-center mx-auto border-2 border-slate-600 shadow-md"
+                                style="background-color: #64748b; width: 4.025rem; height: 4.025rem;"
                                 title="품목 삭제">
                             <i class="fa-solid fa-trash text-xl"></i>
                         </button>
