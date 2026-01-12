@@ -69,7 +69,8 @@
             </div>
             <div class="flex gap-3">
                 <button onclick="saveAllData(this)"
-                        class="px-6 py-3 rounded-lg bg-green-500 text-white font-bold text-lg flex items-center gap-2 border-2 border-green-700 shadow-md">
+                        class="px-6 py-3 rounded-lg text-white font-bold text-lg flex items-center gap-2 border-2 border-green-700 shadow-md"
+                        style="background-color: #22c55e;">
                     <i class="fa-solid fa-save"></i> 저장
                 </button>
                 <button onclick="toggleModal(true)"
@@ -384,7 +385,8 @@
                     <td class="pl-4 pr-5 py-4">
                         <div class="flex items-center gap-3">
                             <button onclick="decreaseQuantity(${index})" type="button"
-                                    class="w-14 h-14 mobile-compact-btn rounded-lg bg-red-500 text-white font-black text-3xl flex items-center justify-center border-2 border-red-700 shadow-md"
+                                    class="w-14 h-14 mobile-compact-btn rounded-lg text-white font-black text-3xl flex items-center justify-center border-2 border-red-700 shadow-md"
+                                    style="background-color: #ef4444;"
                                     title="수량 감소">
                                 −
                             </button>
@@ -405,7 +407,8 @@
                     </td>
                     <td class="px-5 py-4 text-center">
                         <button onclick="deleteItem(${index})" type="button"
-                                class="w-14 h-14 mobile-compact-btn rounded-lg bg-red-500 text-white flex items-center justify-center mx-auto border-2 border-red-700 shadow-md"
+                                class="w-14 h-14 mobile-compact-btn rounded-lg text-white flex items-center justify-center mx-auto border-2 border-red-700 shadow-md"
+                                style="background-color: #ef4444;"
                                 title="품목 삭제">
                             <i class="fa-solid fa-trash text-xl"></i>
                         </button>
